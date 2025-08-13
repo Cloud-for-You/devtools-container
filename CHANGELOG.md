@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/Cloud-for-You/devtools-container/compare/v1.2.0...v1.3.0) (2025-08-13)
+
+
+### Features
+
+* Add new utility to images ([1b7a21a](https://github.com/Cloud-for-You/devtools-container/commit/1b7a21ab222ee29556631f63f16b28e61f478207))
+
 ## [1.2.0](https://github.com/Cloud-for-You/devtools-container/compare/v1.1.0...v1.2.0) (2025-08-13)
 
 
