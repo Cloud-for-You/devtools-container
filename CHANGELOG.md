@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/Cloud-for-You/devtools-container/compare/v1.1.0...v1.2.0) (2025-08-13)
+
+
+### Features
+
+* Add git utility ([70e0da7](https://github.com/Cloud-for-You/devtools-container/commit/70e0da7f416a47c785b005fca31b440d31afe5ad))
+
 ## [1.1.0](https://github.com/Cloud-for-You/devtools-container/compare/v1.0.0...v1.1.0) (2025-08-13)
 
 
