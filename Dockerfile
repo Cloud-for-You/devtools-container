@@ -2,9 +2,13 @@ FROM registry.access.redhat.com/ubi9/ubi:latest
 
 ARG OC_VERSION=4.18.13
 ARG YQ_VERSION=v4.47.1
+ARG NODEJS_VERSION=22
 
-# Instalace utilit: yq, jq, kubectl, helm, oc-cli pomocí microdnf
 RUN dnf install -y jq tar git
+RUN dnf module enable -y nodejs:${NODEJS_VERSION} \
+    && dnf install -y nodejs npm \
+    && dnf clean all
+RUN npm install -g ajv-cli 
 
 RUN curl -fsSL -o /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 \ 
     && chmod +x /usr/local/bin/yq
