@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/Cloud-for-You/devtools-container/compare/v1.3.0...v1.4.0) (2025-08-14)
+
+
+### Features
+
+* Add library ajv-formats ([2e9c49a](https://github.com/Cloud-for-You/devtools-container/commit/2e9c49a3a7b8c002f8d898ea27a813dfd24995b4))
+
 ## [1.3.0](https://github.com/Cloud-for-You/devtools-container/compare/v1.2.0...v1.3.0) (2025-08-13)
 
 
