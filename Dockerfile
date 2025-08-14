@@ -8,7 +8,7 @@ RUN dnf install -y jq tar git
 RUN dnf module enable -y nodejs:${NODEJS_VERSION} \
     && dnf install -y nodejs npm \
     && dnf clean all
-RUN npm install -g ajv-cli 
+RUN npm install -g ajv-cli ajv-formats
 
 RUN curl -fsSL -o /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64 \ 
     && chmod +x /usr/local/bin/yq
