@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/Cloud-for-You/devtools-container/compare/v1.4.0...v1.5.0) (2025-08-18)
+
+
+### Features
+
+* Pridani helm pluginu pro moznost pushovat do sonatype nexus repository ([64bb7d2](https://github.com/Cloud-for-You/devtools-container/commit/64bb7d29570c4c2e3edbb5d292199810471c848f))
+
 ## [1.4.0](https://github.com/Cloud-for-You/devtools-container/compare/v1.3.0...v1.4.0) (2025-08-14)
 
 
