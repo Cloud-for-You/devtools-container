@@ -16,7 +16,8 @@ RUN curl -fsSL -o /usr/local/bin/yq https://github.com/mikefarah/yq/releases/dow
 RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 \
     && chmod 700 get_helm.sh \
     && ./get_helm.sh \
-    && rm get_helm.sh
+    && rm get_helm.sh \
+    && helm plugin install --version master https://github.com/sonatype-nexus-community/helm-nexus-push.git
 
 RUN curl -fsSL -o openshift-client-linux.tar.gz https://mirror.openshift.com/pub/openshift-v4/clients/ocp/${OC_VERSION}/openshift-client-linux.tar.gz \
     && tar -xzf openshift-client-linux.tar.gz -C /usr/local/bin \
