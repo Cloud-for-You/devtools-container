@@ -16,10 +16,11 @@ jobs:
   #  uses: Cloud-for-You/github-workflows/.github/workflows/build-generic-container.yaml@main
   #  secrets: inherit
 
-  create-pr:
-    name: Create PR to main
+  create-or-update-pr:
+    name: Create or Update PR to main
     #needs: build-image-container
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -27,7 +28,36 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
           ref: ${{ github.ref }}
-      - name: Create Pull Request to main
+
+      - name: Fetch all branches
+        run: git fetch --all
+
+      - name: Get commit messages
+        id: commits
+        run: |
+          commits=$(git log origin/main..HEAD --pretty=format:"- %s")
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "Auto-created Pull Request" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "Commits list:" >> $GITHUB_OUTPUT
+          echo "${commits}" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Check if PR exists
+        id: pr-check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh pr view ${{ github.ref_name }} --base main --json url > pr.json 2>/dev/null; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            url=$(jq -r .url pr.json)
+            echo "url=$url" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create PR
+        if: steps.pr-check.outputs.exists == 'false'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -35,4 +65,18 @@ jobs:
             --base main \
             --head ${{ github.ref_name }} \
             --title "chore: sync from dev branch" \
-            --body "Auto-created Pull Request"
+            --body "${{ steps.commits.outputs.body }}"
+
+      - name: Update PR body
+        if: steps.pr-check.outputs.exists == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr edit ${{ github.ref_name }} \
+            --base main \
+            --title "chore: sync from dev branch" \
+            --body "${{ steps.commits.outputs.body }}"
+
+      - name: Show PR URL
+        if: steps.pr-check.outputs.exists == 'true'
+        run: echo "PR already exists: ${{ steps.pr-check.outputs.url }}"
