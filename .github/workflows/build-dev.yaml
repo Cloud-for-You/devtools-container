@@ -28,9 +28,11 @@ jobs:
       - name: Get commit messages
         id: commits
         run: |
-          echo "COMMITS<<EOF" >> $GITHUB_ENV
-          git log origin/main..HEAD --pretty=format:"- %s (%h)" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          {
+            echo 'COMMITS<<EOF'
+            git log origin/main..HEAD --pretty=format:"- %s (%h)"
+            echo 'EOF'
+          } >> $GITHUB_ENV
       - name: Create Pull Request to main
         id: cpr
         uses: peter-evans/create-pull-request@v7
