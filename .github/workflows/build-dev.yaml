@@ -32,10 +32,10 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if gh pr view ${{ github.ref_name }} --base main --json url > pr.json 2>/dev/null; then
+          if gh pr view ${{ github.ref_name }} --base main --json number,url > pr.json 2>/dev/null; then
             echo "exists=true" >> $GITHUB_OUTPUT
-            url=$(jq -r .url pr.json)
-            echo "url=$url" >> $GITHUB_OUTPUT
+            echo "url=$(jq -r .url pr.json)" >> $GITHUB_OUTPUT
+            echo "number=$(jq -r .number pr.json)" >> $GITHUB_OUTPUT
           else
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
@@ -54,7 +54,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr edit ${{ github.ref_name }} \
-            --base main \
+          gh pr edit ${{ steps.pr-check.outputs.number }} \
             --title "chore: sync from dev branch" \
             --body "Auto-created Pull Request"
+      - name: Show PR URL
+        if: steps.pr-check.outputs.exists == 'true'
+        run: echo "PR already exists: ${{ steps.pr-check.outputs.url }}"
