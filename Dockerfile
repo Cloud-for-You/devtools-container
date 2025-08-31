@@ -36,4 +36,3 @@ RUN curl -fsSL -o openshift-client-linux.tar.gz https://mirror.openshift.com/pub
     && chmod +x /usr/local/bin/oc \
     && chmod +x /usr/local/bin/kubectl
     
-    

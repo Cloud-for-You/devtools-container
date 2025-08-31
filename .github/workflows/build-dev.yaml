@@ -16,47 +16,38 @@ jobs:
   #  uses: Cloud-for-You/github-workflows/.github/workflows/build-generic-container.yaml@main
   #  secrets: inherit
 
-  #create-release-pr:
-  #  name: Create Release PR
-  #  #needs: build-image-container
-  #  runs-on: ubuntu-latest
-  #  steps:
-  #    - name: Checkout repository
-  #      uses: actions/checkout@v5
-  #      with:
-  #        fetch-depth: 0
-  #        fetch-tags: true
-  #        ref: ${{ github.ref }}
-  #    - name: Fetch all branches
-  #      run: git fetch --all
-  #    - name: Get commit messages
-  #      id: commits
-  #      run: |
-  #        COMMITS="$(git log origin/main..HEAD --pretty=format:"- %s (%h)")"
-  #        echo "COMMITS<<EOF" >> $GITHUB_ENV
-  #        echo "$COMMITS" >> $GITHUB_ENV
-  #        echo "EOF" >> $GITHUB_ENV
-  #    - name: Create Pull Request to main
-  #      id: cpr
-  #      uses: peter-evans/create-pull-request@v7
-  #      with:
-  #        base: main
-  #        branch: ${{ github.ref_name }}
-  #        title: 'feat: release-please trigger'
-  #        body: |
-  #          Auto-created Pull Request
+  create-pr:
+    name: Create PR to main
+    #needs: build-image-container
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          ref: ${{ github.ref }}
+      - name: Fetch all branches
+        run: git fetch --all
+      - name: Get commit messages
+        id: commits
+        run: |
+          commits=$(git log origin/main..HEAD --pretty=format:"- %s")
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "${commits}" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      - name: Create Pull Request to main
+        id: cpr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          base: main
+          branch: ${{ github.ref_name }}
+          title: 'chore: sync from dev branch'
+          body: |
+            Auto-created Pull Request
 
-  #          Commits list:
-  #          ${{ env.COMMITS }}
-  #        commit-message: 'feat: release-please trigger'
-  #        labels: 'release-please'
-  #        delete-branch: false
-  #        draft: true
-  #    - name: Add release-please comment to PR
-  #      if: steps.cpr.outputs.pull-request-number != ''
-  #      uses: peter-evans/create-or-update-comment@v4
-  #      with:
-  #        token: ${{ secrets.GITHUB_TOKEN }}
-  #        issue-number: ${{ steps.cpr.outputs.pull-request-number }}
-  #        body: |
-  #          feat: release-please
+            Commits list:
+            ${{ steps.commits.outputs.body }}
+          commit-message: 'chore: sync from dev branch'
+          delete-branch: false
+          draft: false
