@@ -40,8 +40,8 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v7
         with:
-          base: main
-          branch: ${{ github.ref_name }}
+          #base: main
+          #branch: ${{ github.ref_name }}
           title: 'feat: release-please trigger'
           body: |
             Auto-created Pull Request
