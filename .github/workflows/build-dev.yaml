@@ -27,28 +27,6 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
           ref: ${{ github.ref }}
-      - name: Fetch all branches
-        run: git fetch --all
-      - name: Get commit messages
-        id: commits
-        run: |
-          commits=$(git log origin/main..HEAD --pretty=format:"- %s")
-          echo "body<<EOF" >> $GITHUB_OUTPUT
-          echo "${commits}" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-      - name: Debug branch and commits
-        run: |
-          echo "Aktuální větev: ${{ github.ref_name }}"
-          echo "Rozdíl mezi origin/main a HEAD:"
-          git log origin/main..HEAD --oneline
-          echo "Rozdíl mezi origin/main a origin/${{ github.ref_name }}:"
-          git log origin/main..origin/${{ github.ref_name }} --oneline
-          echo "HEAD commit:"
-          git rev-parse HEAD
-          echo "origin/main commit:"
-          git rev-parse origin/main
-
       - name: Create Pull Request to main
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -57,4 +35,4 @@ jobs:
             --base main \
             --head ${{ github.ref_name }} \
             --title "chore: sync from dev branch" \
-            --body "$(echo -e "Auto-created Pull Request\n\nCommits list:\n${{ steps.commits.outputs.body }}")"
+            --body "Auto-created Pull Request"
