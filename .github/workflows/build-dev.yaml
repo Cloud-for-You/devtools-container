@@ -36,6 +36,19 @@ jobs:
           echo "body<<EOF" >> $GITHUB_OUTPUT
           echo "${commits}" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Debug branch and commits
+        run: |
+          echo "Aktuální větev: ${{ github.ref_name }}"
+          echo "Rozdíl mezi origin/main a HEAD:"
+          git log origin/main..HEAD --oneline
+          echo "Rozdíl mezi origin/main a origin/${{ github.ref_name }}:"
+          git log origin/main..origin/${{ github.ref_name }} --oneline
+          echo "HEAD commit:"
+          git rev-parse HEAD
+          echo "origin/main commit:"
+          git rev-parse origin/main
+
       - name: Create Pull Request to main
         id: cpr
         uses: peter-evans/create-pull-request@v7
