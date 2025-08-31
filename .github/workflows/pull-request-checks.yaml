@@ -1,0 +1,48 @@
+name: PR Checks for Release-Please
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  release-please-check:
+    name: Release-Please Commit Check
+    runs-on: ubuntu-latest
+    outputs:
+      passed: ${{ steps.check.outputs.passed }}
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Get commits in PR
+        id: commits
+        run: |
+          git fetch origin main
+          # seznam commitů od main
+          COMMITS=$(git log origin/main..HEAD --pretty=format:"%s")
+          echo "$COMMITS"
+          echo "$COMMITS" > commits.txt
+
+      - name: Check commit messages for release-please
+        id: check
+        run: |
+          PASSED=true
+          while read -r line; do
+            # kontrola, zda commit začíná na chore:, feat:, fix: nebo jiný typ pro release-please
+            if [[ ! "$line" =~ ^(chore|feat|fix|perf|docs|refactor|test|style): ]]; then
+              echo "❌ Commit '$line' nesplňuje konvenci release-please"
+              PASSED=false
+            fi
+          done < commits.txt
+
+          if [ "$PASSED" = "false" ]; then
+            echo "passed=false" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "passed=true" >> $GITHUB_OUTPUT
+          fi
