@@ -23,9 +23,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
-          ref: ${{ github.ref_name }}
       - name: Get commit messages
         id: commits
         run: |
