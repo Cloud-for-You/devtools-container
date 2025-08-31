@@ -32,7 +32,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if gh pr view ${{ github.ref_name }} --base main --json number,url > pr.json 2>/dev/null; then
+          if gh pr view ${{ github.ref_name }} --json number,url > pr.json 2>/dev/null; then
             echo "exists=true" >> $GITHUB_OUTPUT
             echo "url=$(jq -r .url pr.json)" >> $GITHUB_OUTPUT
             echo "number=$(jq -r .number pr.json)" >> $GITHUB_OUTPUT
