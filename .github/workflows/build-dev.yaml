@@ -57,6 +57,4 @@ jobs:
             --base main \
             --head ${{ github.ref_name }} \
             --title "chore: sync from dev branch" \
-            --body "Auto-created Pull Request
-Commits list:
-${{ steps.commits.outputs.body }}"
+            --body "$(echo -e "Auto-created Pull Request\n\nCommits list:\n${{ steps.commits.outputs.body }}")"
