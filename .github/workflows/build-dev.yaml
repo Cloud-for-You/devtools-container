@@ -27,6 +27,7 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
           ref: ${{ github.ref }}
+
       - name: Check if PR exists
         id: pr-check
         env:
@@ -45,6 +46,7 @@ jobs:
             echo "number=$NUMBER" >> $GITHUB_OUTPUT
             echo "url=$URL" >> $GITHUB_OUTPUT
           fi
+
       - name: Create PR
         if: steps.pr-check.outputs.exists == 'false' || steps.pr-check.outputs.state != 'OPEN'
         env:
@@ -55,6 +57,7 @@ jobs:
             --head ${{ github.ref_name }} \
             --title "chore: sync from dev branch" \
             --body "Auto-created Pull Request"
+            
       - name: Update PR body
         if: steps.pr-check.outputs.exists == 'true' && steps.pr-check.outputs.state == 'OPEN'
         env:
