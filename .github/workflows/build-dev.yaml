@@ -40,8 +40,8 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v7
         with:
-          #base: main
-          #branch: ${{ github.ref_name }}
+          base: main
+          branch: ${{ github.ref_name }}
           title: 'feat: release-please trigger'
           body: |
             Auto-created Pull Request
@@ -51,6 +51,7 @@ jobs:
           commit-message: 'feat: release-please trigger'
           labels: 'release-please'
           delete-branch: false
+          draft: true
       - name: Add release-please comment to PR
         if: steps.cpr.outputs.pull-request-number != ''
         uses: peter-evans/create-or-update-comment@v4
