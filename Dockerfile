@@ -17,7 +17,7 @@ RUN dnf install -y jq tar git \
 
 # Install python packages
 RUN pip3 install --upgrade pip \
-    && pip3 install --upgrade awxkit=${AWXKIT_VERSION} --root-user-action=ignore
+    && pip3 install --upgrade awxkit==${AWXKIT_VERSION} --root-user-action=ignore
 
 # Install nodejs packages
 RUN npm install -g ajv-cli ajv-formats release-please@${RELEASE_PLEASE_VERSION}
