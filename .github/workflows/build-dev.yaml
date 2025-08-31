@@ -27,18 +27,6 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
           ref: ${{ github.ref }}
-      - name: Fetch all branches
-        run: git fetch --all
-      - name: Get commit messages
-        id: commits
-        run: |
-          commits=$(git log origin/main..HEAD --pretty=format:"- %s")
-          echo "body<<EOF" >> $GITHUB_OUTPUT
-          echo "Auto-created Pull Request" >> $GITHUB_OUTPUT
-          echo "" >> $GITHUB_OUTPUT
-          echo "Commits list:" >> $GITHUB_OUTPUT
-          echo "${commits}" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
       - name: Check if PR exists
         id: pr-check
         env:
@@ -60,7 +48,7 @@ jobs:
             --base main \
             --head ${{ github.ref_name }} \
             --title "chore: sync from dev branch" \
-            --body "${{ steps.commits.outputs.body }}"
+            --body "Auto-created Pull Request"
       - name: Update PR body
         if: steps.pr-check.outputs.exists == 'true'
         env:
@@ -69,4 +57,4 @@ jobs:
           gh pr edit ${{ github.ref_name }} \
             --base main \
             --title "chore: sync from dev branch" \
-            --body "${{ steps.commits.outputs.body }}"
+            --body "Auto-created Pull Request"
