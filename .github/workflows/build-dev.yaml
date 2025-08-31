@@ -23,6 +23,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
+      - name: Get commit messages
+        id: commits
+        run: |
+          echo "COMMITS<<EOF" >> $GITHUB_ENV
+          git log origin/main..HEAD --pretty=format:"- %s (%h)" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
       - name: Create Pull Request to main
         id: cpr
         uses: peter-evans/create-pull-request@v7
@@ -30,7 +39,11 @@ jobs:
           base: main
           branch: ${{ github.ref_name }}
           title: 'feat: release-please trigger'
-          body: 'feat: release-please trigger'
+          body: |
+            Auto-created Pull Request
+
+            Commits list:
+            ${{ env.COMMITS }}
           commit-message: 'feat: release-please trigger'
           labels: 'release-please'
           delete-branch: false
