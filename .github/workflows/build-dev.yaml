@@ -57,6 +57,4 @@ jobs:
           gh pr edit ${{ steps.pr-check.outputs.number }} \
             --title "chore: sync from dev branch" \
             --body "Auto-created Pull Request"
-      - name: Show PR URL
-        if: steps.pr-check.outputs.exists == 'true'
-        run: echo "PR already exists: ${{ steps.pr-check.outputs.url }}"
+            
