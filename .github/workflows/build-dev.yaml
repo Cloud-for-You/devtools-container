@@ -50,17 +50,13 @@ jobs:
           git rev-parse origin/main
 
       - name: Create Pull Request to main
-        id: cpr
-        uses: peter-evans/create-pull-request@v7
-        with:
-          base: main
-          branch: ${{ github.ref_name }}
-          title: 'chore: sync from dev branch'
-          body: |
-            Auto-created Pull Request
-
-            Commits list:
-            ${{ steps.commits.outputs.body }}
-          commit-message: 'chore: sync from dev branch'
-          delete-branch: false
-          draft: false
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base main \
+            --head ${{ github.ref_name }} \
+            --title "chore: sync from dev branch" \
+            --body "Auto-created Pull Request
+Commits list:
+${{ steps.commits.outputs.body }}"
