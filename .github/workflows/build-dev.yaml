@@ -32,15 +32,21 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if gh pr view ${{ github.ref_name }} --json number,url > pr.json 2>/dev/null; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-            echo "url=$(jq -r .url pr.json)" >> $GITHUB_OUTPUT
-            echo "number=$(jq -r .number pr.json)" >> $GITHUB_OUTPUT
-          else
+          PR_JSON=$(gh pr list --head ${{ github.ref_name }} --json number,state,url)
+          COUNT=$(echo "$PR_JSON" | jq length)
+          if [ "$COUNT" -eq 0 ]; then
             echo "exists=false" >> $GITHUB_OUTPUT
+          else
+            STATE=$(echo "$PR_JSON" | jq -r '.[0].state')
+            NUMBER=$(echo "$PR_JSON" | jq -r '.[0].number')
+            URL=$(echo "$PR_JSON" | jq -r '.[0].url')
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "state=$STATE" >> $GITHUB_OUTPUT
+            echo "number=$NUMBER" >> $GITHUB_OUTPUT
+            echo "url=$URL" >> $GITHUB_OUTPUT
           fi
       - name: Create PR
-        if: steps.pr-check.outputs.exists == 'false'
+        if: steps.pr-check.outputs.exists == 'false' || steps.pr-check.outputs.state != 'OPEN'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -50,7 +56,7 @@ jobs:
             --title "chore: sync from dev branch" \
             --body "Auto-created Pull Request"
       - name: Update PR body
-        if: steps.pr-check.outputs.exists == 'true'
+        if: steps.pr-check.outputs.exists == 'true' && steps.pr-check.outputs.state == 'OPEN'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
