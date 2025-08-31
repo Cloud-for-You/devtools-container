@@ -20,7 +20,6 @@ jobs:
     name: Create or Update PR to main
     #needs: build-image-container
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -28,10 +27,8 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
           ref: ${{ github.ref }}
-
       - name: Fetch all branches
         run: git fetch --all
-
       - name: Get commit messages
         id: commits
         run: |
@@ -42,7 +39,6 @@ jobs:
           echo "Commits list:" >> $GITHUB_OUTPUT
           echo "${commits}" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-
       - name: Check if PR exists
         id: pr-check
         env:
@@ -55,7 +51,6 @@ jobs:
           else
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
-
       - name: Create PR
         if: steps.pr-check.outputs.exists == 'false'
         env:
@@ -66,7 +61,6 @@ jobs:
             --head ${{ github.ref_name }} \
             --title "chore: sync from dev branch" \
             --body "${{ steps.commits.outputs.body }}"
-
       - name: Update PR body
         if: steps.pr-check.outputs.exists == 'true'
         env:
@@ -76,7 +70,3 @@ jobs:
             --base main \
             --title "chore: sync from dev branch" \
             --body "${{ steps.commits.outputs.body }}"
-
-      - name: Show PR URL
-        if: steps.pr-check.outputs.exists == 'true'
-        run: echo "PR already exists: ${{ steps.pr-check.outputs.url }}"
