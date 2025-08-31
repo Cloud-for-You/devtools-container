@@ -11,14 +11,14 @@ permissions:
   issues: write
 
 jobs:
-  build-image-container:
-    name: BUILD
-    uses: Cloud-for-You/github-workflows/.github/workflows/build-generic-container.yaml@main
-    secrets: inherit
+  #build-image-container:
+  #  name: BUILD
+  #  uses: Cloud-for-You/github-workflows/.github/workflows/build-generic-container.yaml@main
+  #  secrets: inherit
 
   create-release-pr:
     name: Create Release PR
-    needs: build-image-container
+    #needs: build-image-container
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
