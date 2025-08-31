@@ -12,3 +12,6 @@ helm | 3.18.4 | https://raw.githubusercontent.com/helm/helm/main/scripts/get-hel
 oc-cli | 4.18.3 | https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.18.3/openshift-client-linux.tar.gz |
 nodejs | 22 | dnf
 ajv-cli | | npm | Command line interface for ajv, one of the fastest json schema validators. Supports JSON, JSON5, and YAML.
+awxkit | 24.6.1 | pip3 | 
+release-please | 17.1.2 | npm |
+

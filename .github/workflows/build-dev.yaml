@@ -1,9 +1,60 @@
 name: Build DEV version
 on:
   workflow_dispatch:
+  push:
+    branches-ignore:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
 
 jobs:
-  build-image-container:
-    name: BUILD
-    uses: Cloud-for-You/github-workflows/.github/workflows/build-go-container.yaml@main
-    secrets: inherit
+  #build-image-container:
+  #  name: BUILD
+  #  uses: Cloud-for-You/github-workflows/.github/workflows/build-generic-container.yaml@main
+  #  secrets: inherit
+
+  create-or-update-pr:
+    name: Create or Update PR to main
+    #needs: build-image-container
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          ref: ${{ github.ref }}
+      - name: Check if PR exists
+        id: pr-check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh pr view ${{ github.ref_name }} --json number,url > pr.json 2>/dev/null; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "url=$(jq -r .url pr.json)" >> $GITHUB_OUTPUT
+            echo "number=$(jq -r .number pr.json)" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Create PR
+        if: steps.pr-check.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base main \
+            --head ${{ github.ref_name }} \
+            --title "chore: sync from dev branch" \
+            --body "Auto-created Pull Request"
+      - name: Update PR body
+        if: steps.pr-check.outputs.exists == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr edit ${{ steps.pr-check.outputs.number }} \
+            --title "chore: sync from dev branch" \
+            --body "Auto-created Pull Request"
+            
