@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/Cloud-for-You/devtools-container/compare/v1.5.0...v1.6.0) (2025-09-01)
+
+
+### Features
+
+* Add awxkit and release-please ([#12](https://github.com/Cloud-for-You/devtools-container/issues/12)) ([8a2ab0f](https://github.com/Cloud-for-You/devtools-container/commit/8a2ab0f115bb140cbc0651b88db9ad4b381b8c18))
+
 ## [1.5.0](https://github.com/Cloud-for-You/devtools-container/compare/v1.4.0...v1.5.0) (2025-08-18)
 
 
