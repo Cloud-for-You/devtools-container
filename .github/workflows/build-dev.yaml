@@ -1,9 +1,69 @@
 name: Build DEV version
 on:
   workflow_dispatch:
+  push:
+    branches-ignore:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
 
 jobs:
   build-image-container:
     name: BUILD
-    uses: Cloud-for-You/github-workflows/.github/workflows/build-go-container.yaml@main
+    uses: Cloud-for-You/github-workflows/.github/workflows/build-generic-container.yaml@main
     secrets: inherit
+
+  create-or-update-pr:
+    name: Create or Update PR to main
+    needs: build-image-container
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          ref: ${{ github.ref }}
+
+      - name: Check if PR exists
+        id: pr-check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_JSON=$(gh pr list --head ${{ github.ref_name }} --json number,state,url)
+          COUNT=$(echo "$PR_JSON" | jq length)
+          if [ "$COUNT" -eq 0 ]; then
+            echo "exists=false" >> $GITHUB_OUTPUT
+          else
+            STATE=$(echo "$PR_JSON" | jq -r '.[0].state')
+            NUMBER=$(echo "$PR_JSON" | jq -r '.[0].number')
+            URL=$(echo "$PR_JSON" | jq -r '.[0].url')
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "state=$STATE" >> $GITHUB_OUTPUT
+            echo "number=$NUMBER" >> $GITHUB_OUTPUT
+            echo "url=$URL" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create PR
+        if: steps.pr-check.outputs.exists == 'false' || steps.pr-check.outputs.state != 'OPEN'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base main \
+            --head ${{ github.ref_name }} \
+            --title "chore: sync from dev branch" \
+            --body "Auto-created Pull Request"
+            
+      - name: Update PR body
+        if: steps.pr-check.outputs.exists == 'true' && steps.pr-check.outputs.state == 'OPEN'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr edit ${{ steps.pr-check.outputs.number }} \
+            --title "chore: sync from dev branch" \
+            --body "Auto-created Pull Request"
+            
