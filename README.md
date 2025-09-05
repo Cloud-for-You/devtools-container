@@ -13,4 +13,5 @@ oc-cli | 4.18.3 | https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.18
 nodejs | 22 | dnf
 ajv-cli | | npm | Command line interface for ajv, one of the fastest json schema validators. Supports JSON, JSON5, and YAML.
 awxkit | 24.6.1 | pip3 | 
+ansible-runner | 2.4.1 | pip3 |
 release-please | 17.1.2 | npm |

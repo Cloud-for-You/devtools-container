@@ -4,6 +4,7 @@ ARG OC_VERSION=4.18.13
 ARG YQ_VERSION=v4.47.1
 ARG NODEJS_VERSION=22
 ARG AWXKIT_VERSION=24.6.1
+ARG ANSIBLE_RUNNER_VERSION=2.4.1
 ARG RELEASE_PLEASE_VERSION=17.1.2
 
 # Enable NodeJS module stream
@@ -17,7 +18,9 @@ RUN dnf install -y jq tar git \
 
 # Install python packages
 RUN pip3 install --upgrade pip \
-    && pip3 install --upgrade awxkit==${AWXKIT_VERSION} --root-user-action=ignore
+    && pip3 install --upgrade --root-user-action=ignore \
+      awxkit==${AWXKIT_VERSION} \
+      ansible-runner==${ANSIBLE_RUNNER_VERSION}
 
 # Install nodejs packages
 RUN npm install -g ajv-cli ajv-formats release-please@${RELEASE_PLEASE_VERSION}
